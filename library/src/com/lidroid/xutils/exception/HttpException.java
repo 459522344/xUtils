@@ -20,6 +20,8 @@ public class HttpException extends BaseException {
 
     private int exceptionCode;
 
+	private String httpEntity;
+
     public HttpException() {
     }
 
@@ -52,6 +54,19 @@ public class HttpException extends BaseException {
     }
 
     /**
+	 * @param exceptionCode
+	 *            The http response status code, 0 if the http request error and
+	 *            has no response.
+	 * @param detailMessage
+	 * @param httpEntity
+	 */
+	public HttpException(int exceptionCode, String detailMessage, String httpEntity) {
+		super(detailMessage);
+		this.exceptionCode = exceptionCode;
+		this.httpEntity = httpEntity;
+	}
+    
+    /**
      * @param exceptionCode The http response status code, 0 if the http request error and has no response.
      * @param detailMessage
      * @param throwable
@@ -76,4 +91,12 @@ public class HttpException extends BaseException {
     public int getExceptionCode() {
         return exceptionCode;
     }
+    
+    /**
+	 * 
+	 * @return The http response httpEntity
+	 */
+	public String getHttpEntity() {
+		return httpEntity;
+	}
 }
