@@ -16,11 +16,13 @@
 package com.lidroid.xutils.http;
 
 import android.os.SystemClock;
+
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.callback.*;
 import com.lidroid.xutils.task.PriorityAsyncTask;
 import com.lidroid.xutils.util.OtherUtils;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolException;
@@ -30,6 +32,7 @@ import org.apache.http.client.RedirectHandler;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -230,10 +233,10 @@ public class HttpHandler<T> extends PriorityAsyncTask<Object, Object, Void> impl
         if (isCancelled()) return null;
 
         StatusLine status = response.getStatusLine();
+        HttpEntity entity = response.getEntity();
         int statusCode = status.getStatusCode();
         if (statusCode < 300) {
             Object result = null;
-            HttpEntity entity = response.getEntity();
             if (entity != null) {
                 isUploading = false;
                 if (isDownloadingFile) {
@@ -261,8 +264,8 @@ public class HttpHandler<T> extends PriorityAsyncTask<Object, Object, Void> impl
         } else if (statusCode == 416) {
             throw new HttpException(statusCode, "maybe the file has downloaded completely");
         } else {
-            throw new HttpException(statusCode, status.getReasonPhrase());
-        }
+			throw new HttpException(statusCode, status.getReasonPhrase(), entity != null ? EntityUtils.toString(entity, charset) : null);
+		}
         return null;
     }
 
